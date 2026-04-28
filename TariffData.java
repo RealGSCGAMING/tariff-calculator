@@ -1,10 +1,10 @@
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class TariffData {
 
+     private static final String TARIFF_FILE = "tariff.csv";
      private static String tariffs[][];
 
      /**
@@ -14,7 +14,7 @@ public class TariffData {
       * 
       * @return A 2DArray containing the parsed data.
       */
-     private static String[][] loadData(String fileName) {
+     public static void loadData(String fileName) {
 
           ArrayList<String[]> loadedData = new ArrayList<>();
           try {
@@ -29,11 +29,14 @@ public class TariffData {
                while (tariffFileScanner.hasNext()) {
                     String line = tariffFileScanner.nextLine();
                     String[] lineArray = line.split(",");
-                    ArrayList<String> lineArrayList = new ArrayList<>(Arrays.asList(lineArray));
-                    loadedData.add(lineArrayList);
+                    loadedData.add(lineArray);
                }
 
                tariffFileScanner.close();
+
+               String[][] arrayConvert = loadedData.toArray(new String[0][0]);
+
+               tariffs = arrayConvert;
 
           } catch (Exception e) {
                System.out.println("[TariffData.loadData] An error occured: " + e.getMessage());
@@ -41,7 +44,7 @@ public class TariffData {
      }
 
      /**
-      * Updates the tariff data within the file.
+      * TODO: Updates the tariff data within the file.
       * 
       * @param fileName The file to be updated.
       * @param apiUrl   The API endpoint to be used to retrieve the new data.
@@ -59,8 +62,13 @@ public class TariffData {
       * @return The data related to the country code, or an empty array if not found.
       */
      public static String[] getData(String countryCode) {
-          System.out.println("[TariffData.getData] Not implemented yet, demo data will be returned");
-          return new String[1];
+          for (String[] i : tariffs) {
+               if (i[0].equals(countryCode)) {
+                    return i;
+               }
+          }
+          throw new ArrayIndexOutOfBoundsException(
+                    "[TariffData.getData] Could not find the specified country code within the array.");
      }
 
      /**
@@ -72,8 +80,12 @@ public class TariffData {
       * @return The data located at the index.
       */
      public static String getData(int index, int index2) {
-          System.out.println("[TariffData.getData] Not implemented yet, demo data will be returned");
-          return "0.1";
+          if (index > tariffs.length - 1 || index2 > tariffs[index].length - 1) {
+               throw new IndexOutOfBoundsException(
+                         "[TariffData.getData] The specified index is out of the array's range.");
+          } else {
+               return tariffs[index][index2];
+          }
      }
 
      /**
@@ -82,18 +94,34 @@ public class TariffData {
       * @return The 2DArray containing all tariff data.
       */
      public static String[][] getFullData() {
-          System.out.println("[TariffData.getFullData] Not implemented yet, demo data will be returned");
-          return new String[1][1];
+          return tariffs;
      }
 
      /**
-      * This main method is used for testing only and should be removed in
-      * production.
+      * This main method is for testing only and should be removed in production.
       */
      public static void main(String[] args) {
+
+          // updateData(TARIFF_FILE, "https://api.com");
+          loadData(TARIFF_FILE);
+          String[] japanTariffData = getData("JP");
+          System.out.println(japanTariffData[2]);
+
           System.out.println(
-                    "[TariffData.main] This main method is used for testing only and should be removed in production.");
-          updateData("tariff.csv", "https://api.com");
-          loadData("tariff.csv");
+                    "[TariffData.main] Note: This main method is for testing only and should be removed in production.");
+     }
+
+     /**
+      * Utility method to print a 2D array.
+      * 
+      * @param array The 2D array to be printed.
+      */
+     private static void printArray(String[][] array) {
+          for (String[] i : array) {
+               for (String j : i) {
+                    System.out.print(j + "\t");
+               }
+               System.out.println();
+          }
      }
 }

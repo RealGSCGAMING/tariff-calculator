@@ -1,0 +1,11 @@
+{
+    "java.project.sourcePaths": [
+        "."
+    ],
+    "java.project.referencedLibraries": [
+        "libraries\\okhttp-5.3.2.jar",
+        "libraries\\okhttp-5.3.2-sources.jar",
+        "c:\\Users\\1961680\\Desktop\\tariff-calculator\\libraries\\json.jar"
+    ],
+    "maven.view": "flat"
+}
