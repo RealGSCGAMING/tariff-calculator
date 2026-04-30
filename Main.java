@@ -3,11 +3,12 @@ import java.util.Scanner;
 public class Main {
 
     /**
-      * A simple PrintLn UI for the Tariff Calculator.
-      */
+     * A simple PrintLn UI for the Tariff Calculator.
+     */
     public static void main(String[] args) {
 
-        TariffData.loadData("tariff.csv");
+        TariffData.loadData();
+        CurrencyConversion.loadData();
 
         System.out.println("Welcome to the Tariff Calculator");
 
@@ -16,6 +17,16 @@ public class Main {
         while (true) {
             System.out.println("What is the country code of the item's country of origin");
             String countryCode = sc.nextLine().toUpperCase();
+
+            System.out.println("Is the price in USD or local currency (true/false)");
+            boolean local = Boolean.parseBoolean(sc.nextLine());
+
+            String currencyCode = "";
+
+            if (local) {
+                System.out.println("What is the country code of the item's local currency");
+                currencyCode = sc.nextLine().toUpperCase();
+            }
 
             System.out.println("What is the price of the item");
             double price = Double.parseDouble(sc.nextLine());
@@ -27,7 +38,8 @@ public class Main {
             double newPrice;
 
             try {
-                newPrice = TariffOperations.getTariff(price, countryCode, special);
+                newPrice = TariffOperations.getTariff((local ? CurrencyConversion.convert(price, currencyCode) : price),
+                        countryCode, special);
             } catch (Exception e) {
                 System.out.println("An error occurred. " + e.getMessage());
                 newPrice = 0;

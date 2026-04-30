@@ -11,10 +11,8 @@ public class TariffData {
       * Parses the file for tariff data.
       * 
       * @param fileName The file to be parsed.
-      * 
-      * @return A 2DArray containing the parsed data.
       */
-     public static void loadData(String fileName) {
+     private static void loadData(String fileName) {
 
           ArrayList<String[]> loadedData = new ArrayList<>();
           try {
@@ -41,6 +39,13 @@ public class TariffData {
           } catch (Exception e) {
                System.out.println("[TariffData.loadData] An error occured: " + e.getMessage());
           }
+     }
+
+     /**
+      * Parses the file for tariff data.
+      */
+     public static void loadData() {
+          loadData(TARIFF_FILE);
      }
 
      /**

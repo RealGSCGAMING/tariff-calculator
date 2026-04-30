@@ -1,5 +1,8 @@
 public class TariffOperations {
 
+    // Enable for demo
+    private static final boolean USE_IEEPA = true;
+
     /**
      * Retrieve the tariff rate on a country.
      * 
@@ -13,7 +16,11 @@ public class TariffOperations {
         if (special) {
             return 0.5;
         } else {
-            return Double.parseDouble(TariffData.getData(countryCode)[2]);
+            if (USE_IEEPA) {
+                return Double.parseDouble(TariffData.getData(countryCode)[3]);
+            } else {
+                return Double.parseDouble(TariffData.getData(countryCode)[2]);
+            }
         }
     }
 
@@ -30,7 +37,7 @@ public class TariffOperations {
         double tariff = price * (rate + 1);
 
         // Round to prevent extra decimals at end
-        return Math.round(tariff * 100000.0) / 100000.0;
+        return Math.round(tariff * 100.0) / 100.0;
     }
 
     /**
@@ -53,7 +60,7 @@ public class TariffOperations {
      */
     public static void main(String[] args) {
 
-        TariffData.loadData("tariff.csv");
+        TariffData.loadData();
 
         getTariffRate("JP", false);
 

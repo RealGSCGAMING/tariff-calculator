@@ -29,7 +29,7 @@ public class GUI {
         frame.setLayout(new BorderLayout());
         frame.setMinimumSize(new Dimension(750, 500));
         frame.setPreferredSize(new Dimension(750, 750));
-        // frame.setResizable(false);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Main panel
         JPanel mainPanel = new JPanel();
@@ -45,16 +45,17 @@ public class GUI {
 
         // Country selection dropdown
         JComboBox<String> dropdown = new JComboBox<>();
-        dropdown.setMaximumSize(new Dimension(350, 100));
-        dropdown.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        dropdown.addItem("[Select Country of Origin]");
-        dropdown.addItem("Germany");
+        dropdown.setMaximumSize(new Dimension(400, 100));
+        dropdown.setFont(new Font("Monospaced", Font.PLAIN, 25));
+        dropdown.addItem("[Select Origin Country]");
+        fillDropdown(dropdown);
 
         // Item price input
         JTextField priceInput = new JTextField("[Enter Item Price]");
         priceInput.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
         priceInput.setForeground(Color.GRAY);
-        priceInput.setMaximumSize(new Dimension(350, 100));
+        priceInput.setMaximumSize(new Dimension(400, 100));
+        priceInput.setHorizontalAlignment(SwingConstants.CENTER);
         priceInput.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
                 if (priceInput.getText().equals("[Enter Item Price]")) {
@@ -74,7 +75,7 @@ public class GUI {
         // Submit button
         JButton submitButton = new JButton("Submit");
         submitButton.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        submitButton.setMaximumSize(new Dimension(350, 100));
+        submitButton.setMaximumSize(new Dimension(400, 100));
         submitButton.setBackground(new Color(19, 102, 11));
         submitButton.setForeground(Color.WHITE);
         submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -83,7 +84,7 @@ public class GUI {
         JLabel resultLabel = new JLabel("Waiting...");
         resultLabel.setBorder(new EmptyBorder(50, 50, 50, 50));
         resultLabel.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        resultLabel.setMaximumSize(new Dimension(350, 100));
+        resultLabel.setMaximumSize(new Dimension(400, 100));
         resultLabel.setOpaque(true);
         resultLabel.setBackground(Color.WHITE);
         resultLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -91,7 +92,11 @@ public class GUI {
 
         submitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                resultLabel.setText("$" + String.valueOf(TariffOperations.getTariff(Double.parseDouble(priceInput.getText()), "DE", false)) + "0");
+                System.out.println("Getting the tariff on a $" + priceInput.getText() + " item from "
+                        + dropdown.getSelectedItem().toString().substring(0, 2));
+                resultLabel.setText(
+                        "$" + String.valueOf(TariffOperations.getTariff(Double.parseDouble(priceInput.getText()),
+                                dropdown.getSelectedItem().toString().substring(0, 2), false)) + "0");
             }
         });
 
@@ -103,30 +108,22 @@ public class GUI {
 
         frame.add(mainPanel);
 
-        // Other buttons
-        // frame.add(new JButton("LeftButton"), BorderLayout.WEST);
-        // frame.add(new JButton("RightButton"), BorderLayout.EAST);
-
-        // Header and footer
-        // frame.add(new JButton("TopButton"), BorderLayout.NORTH);
-        // frame.add(new JButton("BottomButton"), BorderLayout.SOUTH);
-
         frame.pack();
         frame.setVisible(true);
     }
 
-    private JButton createButton(String text, int minx, int miny, int preferredx, int preferredy) {
-        JButton button = new JButton(text);
-        button.setMinimumSize(new Dimension(minx, miny));
-        button.setPreferredSize(new Dimension(preferredx, preferredy));
-        return button;
+    private void fillDropdown(JComboBox<String> dropdown) {
+        String[][] tariffList = TariffData.getFullData();
+        for (String[] i : tariffList) {
+            dropdown.addItem(i[0] + " | " + i[1]);
+        }
     }
 
     /**
      * This main method is for testing only and should be removed in production.
      */
     public static void main(String[] args) {
-        TariffData.loadData("tariff.csv");
-        GUI testGui = new GUI();
+        TariffData.loadData();
+        new GUI();
     }
 }
