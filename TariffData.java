@@ -42,7 +42,7 @@ public class TariffData {
      }
 
      /**
-      * Parses the file for tariff data.
+      * Parses the default tariff file for tariff data.
       */
      public static void loadData() {
           loadData(TARIFF_FILE);
@@ -52,11 +52,17 @@ public class TariffData {
       * TODO: Updates the tariff data within the file.
       * 
       * @param fileName The file to be updated.
-      * @param apiUrl   The API endpoint to be used to retrieve the new data.
       */
-     private static void updateData(String fileName, String apiUrl) {
+     public static void updateData(String fileName) {
           System.out.println("[TariffData.updateData] Not implemented yet");
           tariffs = new String[1][1];
+     }
+
+     /**
+      * Updates the tariff data within the default tariff file.
+      */
+     public static void updateData() {
+          updateData(TARIFF_FILE);
      }
 
      /**
@@ -121,7 +127,7 @@ public class TariffData {
       * 
       * @param array The 2D array to be printed.
       */
-     private static void printArray(String[][] array) {
+     public static void printArray(String[][] array) {
           for (String[] i : array) {
                for (String j : i) {
                     System.out.print(j + "\t");

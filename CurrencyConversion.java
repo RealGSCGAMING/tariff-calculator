@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Scanner;
@@ -43,32 +44,58 @@ public class CurrencyConversion {
     }
 
     /**
-     * Parses the file for currency data.
+     * Parses the default currency file for currency data.
      */
     public static void loadData() {
         loadData(CURRENCY_FILE);
     }
 
     /**
-     * TODO: Updates the currency data within the file.
+     * Updates the currency data within the file.
      * 
      * @param fileName The file to be updated.
-     * @param apiUrl   The API endpoint to be used to retrieve the new data.
      */
-    public static void updateData(String fileName, String apiUrl) {
+    public static void updateData(String fileName) {
         String currencyApiKey = "";
 
         try {
             Properties prop = new Properties();
             prop.load(new FileInputStream("secrets.properties"));
             currencyApiKey = prop.getProperty("currencyapikey");
-            System.out.println(currencyApiKey);
         } catch (Exception e) {
-            System.out.println("Unable to access currency API key");
+            System.out.println("Unable to access currency API key: " + e.getMessage());
         }
 
         String response = APICalls.get("https://v6.exchangerate-api.com/v6/" + currencyApiKey + "/latest/USD");
-        String[] currencies = APICalls.parseJSON(response, "conversion_rates");
+        String[][] currencies = APICalls.parseJSONObject(response, "conversion_rates");
+
+        String updateDate = APICalls.parseJSONProperty(response, "time_last_update_utc").substring(5);
+
+        try {
+            Scanner sc = new Scanner(new File(fileName));
+            String lastUpdateDate = sc.nextLine().split(",")[2];
+            sc.close();
+            if (!(lastUpdateDate.equals(updateDate))) {
+                FileWriter fw = new FileWriter(fileName);
+                fw.write("Currency Code,Conversion Rate," + updateDate + "\n");
+                for (String[] i : currencies) {
+                    fw.write(i[0] + "," + i[1] + "\n");
+                }
+                fw.close();
+                System.out.println("Finished updating currency data.");
+            } else {
+                System.out.println("Currency data is already up-to-date.");
+            }
+        } catch (Exception e) {
+            System.out.println("Unable to write to currency file: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Updates the currency data within the default currency file.
+     */
+    public static void updateData() {
+        updateData(CURRENCY_FILE);
     }
 
     /**
@@ -93,8 +120,8 @@ public class CurrencyConversion {
      * 
      * @return The price of the item in USD.
      */
-    public static double convert(double price, String countryCode) {
-        return convert(price, getRate(countryCode));
+    public static double convert(double price, String currencyCode) {
+        return convert(price, getRate(currencyCode));
     }
 
     /**
@@ -104,10 +131,10 @@ public class CurrencyConversion {
      * 
      * @return The conversion rate of the country's local currency.
      */
-    public static double getRate(String countryCode) {
+    public static double getRate(String currencyCode) {
         for (String[] i : rates) {
-            if (i[0].equals(countryCode)) {
-                return Double.valueOf(i[2]);
+            if (i[0].equals(currencyCode)) {
+                return Double.valueOf(i[1]);
             }
         }
         throw new ArrayIndexOutOfBoundsException(
@@ -127,9 +154,12 @@ public class CurrencyConversion {
      * This main method is for testing only and should be removed in production.
      */
     public static void main(String[] args) {
+        updateData(CURRENCY_FILE);
         loadData();
         TariffData.loadData();
-        System.out.println("$" + convert(10230, "JP"));
-        System.out.println("$" + TariffOperations.getTariff(convert(10230, "JP"), "JP", false));
+        System.out.println("$" + convert(10230, "JPY"));
+        System.out.println("$" + TariffOperations.getTariff(convert(10230, "JPY"), "JP", false));
+        System.out.println(
+                "[CurrencyConversion.main] Note: This main method is for testing only and should be removed in production.");
     }
 }

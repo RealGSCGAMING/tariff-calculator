@@ -48,7 +48,15 @@ public class GUI {
         dropdown.setMaximumSize(new Dimension(400, 100));
         dropdown.setFont(new Font("Monospaced", Font.PLAIN, 25));
         dropdown.addItem("[Select Origin Country]");
-        fillDropdown(dropdown);
+        fillCountryDropdown(dropdown);
+
+        // Country selection dropdown
+        JComboBox<String> dropdown2 = new JComboBox<>();
+        dropdown2.setMaximumSize(new Dimension(400, 100));
+        dropdown2.setFont(new Font("Monospaced", Font.PLAIN, 25));
+        dropdown2.addItem("[Select Currency]");
+        dropdown2.addItem("USD");
+        fillCurrencyDropdown(dropdown2);
 
         // Item price input
         JTextField priceInput = new JTextField("[Enter Item Price]");
@@ -92,17 +100,37 @@ public class GUI {
 
         submitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Getting the tariff on a $" + priceInput.getText() + " item from "
-                        + dropdown.getSelectedItem().toString().substring(0, 2));
-                resultLabel.setText(
-                        "$" + String.valueOf(TariffOperations.getTariff(Double.parseDouble(priceInput.getText()),
-                                dropdown.getSelectedItem().toString().substring(0, 2), false)) + "0");
+                if (priceInput.getText().equals("[Enter Item Price]")
+                        || dropdown.getSelectedItem().equals("[Select Origin Country]")
+                        || dropdown2.getSelectedItem().equals("[Select Currency]")) {
+                    resultLabel.setText("Please fill in all values!");
+                } else {
+                    System.out.println("Getting the tariff on a " + priceInput.getText() + " "
+                            + dropdown2.getSelectedItem() + " item from "
+                            + dropdown.getSelectedItem().toString().substring(0, 2));
+                    double price;
+                    try {
+                        price = Double.parseDouble(priceInput.getText());
+                    } catch (Exception ex) {
+                        resultLabel.setText("Price must be a number!");
+                        return;
+                    }
+
+                    double convertedPrice = CurrencyConversion.convert(price, dropdown2.getSelectedItem().toString());
+
+                    String countryCode = dropdown.getSelectedItem().toString().substring(0, 2);
+
+                    double tariffPrice = TariffOperations.getTariff(convertedPrice, countryCode, false);
+
+                    resultLabel.setText("$" + tariffPrice);
+                }
             }
         });
 
         mainPanel.add(title);
         mainPanel.add(dropdown);
         mainPanel.add(priceInput);
+        mainPanel.add(dropdown2);
         mainPanel.add(submitButton);
         mainPanel.add(resultLabel);
 
@@ -112,18 +140,27 @@ public class GUI {
         frame.setVisible(true);
     }
 
-    private void fillDropdown(JComboBox<String> dropdown) {
+    private void fillCountryDropdown(JComboBox<String> dropdown) {
         String[][] tariffList = TariffData.getFullData();
         for (String[] i : tariffList) {
             dropdown.addItem(i[0] + " | " + i[1]);
         }
     }
 
+    private void fillCurrencyDropdown(JComboBox<String> dropdown) {
+        String[][] currencyList = CurrencyConversion.getFullData();
+        for (String[] i : currencyList) {
+            dropdown.addItem(i[0]);
+        }
+    }
+
     /**
      * This main method is for testing only and should be removed in production.
      */
-    public static void main(String[] args) {
-        TariffData.loadData();
-        new GUI();
-    }
+    /*
+     * public static void main(String[] args) {
+     * TariffData.loadData();
+     * new GUI();
+     * }
+     */
 }

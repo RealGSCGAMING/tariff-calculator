@@ -2,10 +2,47 @@ import java.util.Scanner;
 
 public class Main {
 
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Update datasets? (Y/N)");
+        boolean input = false; //sc.nextLine().toLowerCase().equals("y");
+        System.out.println("N");
+        
+
+        double time = System.nanoTime();
+        if (input) {
+            System.out.println("Updating datasets, please wait...");
+            setup(true);
+        } else {
+            setup(false);
+        }
+
+        System.out.println("Opening GUI...");
+        new GUI();
+
+        System.out.println("Done in " + ((System.nanoTime() - time) / 1e9) + " secs");
+        
+        sc.close();
+    }
+
+    public static void setup() {
+        TariffData.loadData();
+        CurrencyConversion.loadData();
+    }
+
+    public static void setup(boolean update) {
+        if (update) {
+            // TariffData.updateData();
+            CurrencyConversion.updateData();
+        }
+        setup();
+    }
+
     /**
      * A simple PrintLn UI for the Tariff Calculator.
      */
-    public static void main(String[] args) {
+    public static void runPrintedGui() {
 
         TariffData.loadData();
         CurrencyConversion.loadData();
