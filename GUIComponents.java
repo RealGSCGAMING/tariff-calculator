@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.FocusListener;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -341,6 +340,9 @@ class CalculatorModal {
                 if (priceInput.getText().equals("[Enter Item Price]")
                         || countryDropdown.getSelectedItem().equals("[Select Origin Country]")
                         || currencyDropdown.getSelectedItem().equals("---")) {
+                    resultLabel.setVisible(true);
+                    tariffLabel.setVisible(false);
+                    totalLabel.setVisible(false);
                     resultLabel.setText("Please fill in all values!");
                 } else {
                     System.out.println(
@@ -352,6 +354,9 @@ class CalculatorModal {
                         price = Double.parseDouble(ModalUtils.cleanPriceString(priceInput.getText()));
                     } catch (Exception ex) {
                         resultLabel.setText("Price must be a number!");
+                        resultLabel.setVisible(true);
+                        tariffLabel.setVisible(false);
+                        totalLabel.setVisible(false);
                         return;
                     }
 
@@ -360,13 +365,23 @@ class CalculatorModal {
 
                     String countryCode = countryDropdown.getSelectedItem().toString().substring(0, 2);
 
-                    double tariffPrice = TariffOperations.getTariff(convertedPrice, countryCode, false);
+                    double totalPrice = TariffOperations.getTariff(convertedPrice, countryCode, false);
+                    String totalPriceStr = String.valueOf(totalPrice);
+                    if (totalPriceStr.substring(totalPriceStr.indexOf(".") + 1).length() < 2) {
+                        totalPriceStr += "0";
+                    }
+
+                    double tariffPrice = Math.round((totalPrice - convertedPrice) * 100.0) / 100.0;
+                    String tariffPriceStr = String.valueOf(tariffPrice);
+                    if (tariffPriceStr.substring(tariffPriceStr.indexOf(".") + 1).length() < 2) {
+                        tariffPriceStr += "0";
+                    }
 
                     // resultLabel.setText("$" + tariffPrice);
-                    totalLabel.setText("<html>Total:<br>$" + tariffPrice + "</html>");
+                    totalLabel.setText("<html>Total:<br>$" + totalPriceStr + "</html>");
                     totalLabel.setVisible(true);
                     tariffLabel.setText("<html>Tariff:<br>$"
-                            + (Math.round((tariffPrice - convertedPrice) * 100.0) / 100.0) + "</html>");
+                            + tariffPriceStr + "</html>");
                     tariffLabel.setVisible(true);
                 }
             }
@@ -520,7 +535,12 @@ class CurrencyModal {
                     double convertedPrice = CurrencyConversion.reverseConvert(usdPrice,
                             currencyDropdown2.getSelectedItem().toString());
 
-                    resultLabel.setText(convertedPrice + " " + currencyDropdown2.getSelectedItem().toString());
+                    String convertedPriceStr = String.valueOf(convertedPrice);
+                    if (convertedPriceStr.substring(convertedPriceStr.indexOf(".") + 1).length() < 2) {
+                        convertedPriceStr += "0";
+                    }
+
+                    resultLabel.setText(convertedPriceStr + " " + currencyDropdown2.getSelectedItem().toString());
                 }
             }
         });
