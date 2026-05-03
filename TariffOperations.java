@@ -54,19 +54,4 @@ public class TariffOperations {
         double rate = getTariffRate(countryCode, special);
         return getTariff(price, rate);
     }
-
-    /**
-     * This main method is for testing only and should be removed in production.
-     */
-    public static void main(String[] args) {
-
-        TariffData.loadData();
-
-        getTariffRate("JP", false);
-
-        System.out.println(getTariff(100, "JP", false));
-
-        System.out.println(
-                "[TariffOperations.main] Note: This main method is for testing only and should be removed in production.");
-    }
 }

@@ -71,19 +71,4 @@ public class APICalls {
         String value = object1.get(property).toString();
         return value;
     }
-
-    /**
-     * This main method is for testing only and should be removed in production.
-     */
-    public static void main(String[] args) {
-
-        System.out.println(
-                "[APICalls.main] Note: This main method is for testing only and should be removed in production.");
-    }
-
-    public static void printArray(String[] arr) {
-        for (String i : arr) {
-            System.out.println(i);
-        }
-    }
 }

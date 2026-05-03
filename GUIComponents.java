@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.FocusListener;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -11,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -27,20 +29,28 @@ import javax.swing.KeyStroke;
 class ModalUtils {
 
     public static Font titleFont = new Font("Nunito Regular", Font.PLAIN, 50);
-    
+    public static Font normalFont = new Font("Nunito Regular", Font.PLAIN, 25);
+    public static Font monoFont = new Font("Monospaced", Font.PLAIN, 25);
+
+    public static Dimension buttonSize = new Dimension(400, 100);
+    public static Dimension halfButtonSize = new Dimension(200, 100);
+
     /**
      * Quickly applies properties to a JComponent.
      * 
-     * @param component The component to be modified.
-     * @param font The font that the component should use.
+     * @param component       The component to be modified.
+     * @param font            The font that the component should use.
      * @param foregroundColor The foreground color that the component should use.
      * @param backgroundColor The background color that the component should use.
      */
-    public static void applyProperties(JComponent component, Font font, Color foregroundColor, Color backgroundColor) {
+    public static void applyProperties(JComponent component, Font font, Color foregroundColor, Color backgroundColor,
+            Dimension size) {
         component.setFont(font);
         component.setForeground(foregroundColor);
         component.setBackground(backgroundColor);
         component.setAlignmentX(Component.CENTER_ALIGNMENT);
+        component.setMaximumSize(size);
+        component.setPreferredSize(size);
     }
 
     /**
@@ -109,14 +119,14 @@ class ModalUtils {
      * @param button The button to be activated.
      */
     public static void addEnterKeySupport(JButton button) {
-    button.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "press");
-    button.getActionMap().put("press", new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            button.doClick();
-        }
-    });
-}
+        button.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "press");
+        button.getActionMap().put("press", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                button.doClick();
+            }
+        });
+    }
 
 }
 
@@ -133,41 +143,39 @@ class MainModal {
 
         // Title text
         JLabel title = new JLabel("Tariff Calculator");
-        ModalUtils.applyProperties(title, ModalUtils.titleFont, Color.WHITE, Color.WHITE);
-        title.setBorder(new EmptyBorder(50, 50, 50, 50));
+
+        ImageIcon imgIcon = new ImageIcon("logo.png");
+        Image img = imgIcon.getImage();
+        img = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+        imgIcon = new ImageIcon(img);
+        title.setIcon(imgIcon);
+
+        ModalUtils.applyProperties(title, ModalUtils.titleFont, Color.WHITE, Color.WHITE, null);
+        title.setBorder(new EmptyBorder(25, 25, 25, 25));
 
         // Calculator button
         JButton calculatorButton = new JButton("Calculate Tariff");
-        calculatorButton.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        calculatorButton.setMaximumSize(new Dimension(400, 100));
-        calculatorButton.setBackground(new Color(19, 102, 11));
-        calculatorButton.setForeground(Color.WHITE);
-        calculatorButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ModalUtils.applyProperties(calculatorButton, ModalUtils.normalFont, Color.WHITE, new Color(19, 102, 11),
+                ModalUtils.buttonSize);
         ModalUtils.addEnterKeySupport(calculatorButton);
 
         // Currency exchange button
         JButton currencyButton = new JButton("Currency Exchange");
-        currencyButton.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        currencyButton.setMaximumSize(new Dimension(400, 100));
-        currencyButton.setBackground(new Color(69, 153, 232));
-        currencyButton.setForeground(Color.WHITE);
-        currencyButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ModalUtils.applyProperties(currencyButton, ModalUtils.normalFont, Color.WHITE, new Color(69, 153, 232),
+                ModalUtils.buttonSize);
+        ModalUtils.addEnterKeySupport(currencyButton);
 
         // Rankings button
         JButton rankingsButton = new JButton("Tariff List");
-        rankingsButton.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        rankingsButton.setMaximumSize(new Dimension(400, 100));
-        rankingsButton.setBackground(new Color(202, 180, 15));
-        rankingsButton.setForeground(Color.WHITE);
-        rankingsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ModalUtils.applyProperties(rankingsButton, ModalUtils.normalFont, Color.WHITE, new Color(202, 180, 15),
+                ModalUtils.buttonSize);
+        ModalUtils.addEnterKeySupport(rankingsButton);
 
         // Close button
         JButton closeButton = new JButton("Close");
-        closeButton.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        closeButton.setMaximumSize(new Dimension(400, 100));
-        closeButton.setBackground(new Color(247, 155, 148));
-        closeButton.setForeground(Color.BLACK);
-        closeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ModalUtils.applyProperties(closeButton, ModalUtils.normalFont, Color.BLACK, new Color(247, 155, 148),
+                ModalUtils.buttonSize);
+        ModalUtils.addEnterKeySupport(closeButton);
 
         calculatorButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -217,24 +225,20 @@ class CalculatorModal {
 
         // Title text
         JLabel title = new JLabel("Calculate Tariff");
-        title.setFont(new Font("Nunito Regular", Font.PLAIN, 50));
+        ModalUtils.applyProperties(title, ModalUtils.titleFont, Color.WHITE, null, null);
         title.setBorder(new EmptyBorder(50, 50, 50, 50));
-        title.setForeground(Color.WHITE);
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Country selection dropdown
         JComboBox<String> countryDropdown = new JComboBox<>();
-        countryDropdown.setMaximumSize(new Dimension(400, 100));
-        countryDropdown.setFont(new Font("Monospaced", Font.PLAIN, 25));
+        ModalUtils.applyProperties(countryDropdown, ModalUtils.monoFont, null, Color.WHITE, ModalUtils.buttonSize);
         countryDropdown.addItem("[Select Origin Country]");
         ModalUtils.fillCountryDropdown(countryDropdown);
 
         // Item price input
         JTextField priceInput = new JTextField("[Enter Item Price]");
-        priceInput.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        priceInput.setForeground(Color.GRAY);
-        priceInput.setMaximumSize(new Dimension(300, 100));
+        ModalUtils.applyProperties(priceInput, ModalUtils.monoFont, Color.GRAY, Color.WHITE, new Dimension(300, 100));
         priceInput.setHorizontalAlignment(SwingConstants.CENTER);
+
         priceInput.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
                 if (priceInput.getText().equals("[Enter Item Price]")) {
@@ -253,14 +257,16 @@ class CalculatorModal {
 
         // Currency selection dropdown
         JComboBox<String> currencyDropdown = new JComboBox<>();
-        currencyDropdown.setMaximumSize(new Dimension(100, 100));
-        currencyDropdown.setFont(new Font("Monospaced", Font.PLAIN, 25));
+        ModalUtils.applyProperties(currencyDropdown, ModalUtils.monoFont, Color.BLACK, Color.WHITE,
+                new Dimension(100, 100));
+
         currencyDropdown.addItem("USD");
         currencyDropdown.addItem("EUR");
         currencyDropdown.addItem("GBP");
         currencyDropdown.addItem("JPY");
         currencyDropdown.addItem("---");
         ModalUtils.fillCurrencyDropdown(currencyDropdown);
+
         currencyDropdown.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
             }
@@ -280,44 +286,35 @@ class CalculatorModal {
 
         // Submit button
         JButton submitButton = new JButton("Submit");
-        submitButton.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        submitButton.setMaximumSize(new Dimension(400, 100));
-        submitButton.setBackground(new Color(19, 102, 11));
-        submitButton.setForeground(Color.WHITE);
-        submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ModalUtils.applyProperties(submitButton, ModalUtils.normalFont, Color.WHITE, new Color(19, 102, 11),
+                ModalUtils.buttonSize);
+        ModalUtils.addEnterKeySupport(submitButton);
 
         // Error and waiting display
         JLabel resultLabel = new JLabel("Waiting...");
+        ModalUtils.applyProperties(resultLabel, ModalUtils.normalFont, null, Color.WHITE, ModalUtils.buttonSize);
         resultLabel.setBorder(new EmptyBorder(50, 50, 50, 50));
-        resultLabel.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        resultLabel.setMaximumSize(new Dimension(400, 100));
         resultLabel.setMinimumSize(new Dimension(0, 100));
         resultLabel.setOpaque(true);
-        resultLabel.setBackground(Color.WHITE);
-        resultLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         resultLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         // Tariff price display
         JLabel tariffLabel = new JLabel("...");
+        ModalUtils.applyProperties(tariffLabel, ModalUtils.normalFont, null, new Color(247, 155, 148),
+                ModalUtils.halfButtonSize);
         tariffLabel.setBorder(new EmptyBorder(50, 50, 50, 50));
-        tariffLabel.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        tariffLabel.setMaximumSize(new Dimension(200, 100));
         tariffLabel.setMinimumSize(new Dimension(200, 100));
         tariffLabel.setOpaque(true);
-        tariffLabel.setBackground(new Color(247, 155, 148));
-        tariffLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         tariffLabel.setHorizontalAlignment(SwingConstants.CENTER);
         tariffLabel.setVisible(false);
 
         // Total price display
         JLabel totalLabel = new JLabel("...");
+        ModalUtils.applyProperties(totalLabel, ModalUtils.normalFont, null, new Color(148, 247, 155),
+                ModalUtils.halfButtonSize);
         totalLabel.setBorder(new EmptyBorder(50, 50, 50, 50));
-        totalLabel.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        totalLabel.setMaximumSize(new Dimension(200, 100));
         totalLabel.setMinimumSize(new Dimension(200, 100));
         totalLabel.setOpaque(true);
-        totalLabel.setBackground(new Color(148, 247, 155));
-        totalLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         totalLabel.setHorizontalAlignment(SwingConstants.CENTER);
         totalLabel.setVisible(false);
 
@@ -327,15 +324,12 @@ class CalculatorModal {
         resultGroup.add(resultLabel);
         resultGroup.add(tariffLabel);
         resultGroup.add(totalLabel);
-        // resultGroup.add();
 
         // Back button
         JButton backButton = new JButton("Main Menu");
-        backButton.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        backButton.setMaximumSize(new Dimension(400, 100));
-        backButton.setBackground(Color.BLACK);
-        backButton.setForeground(Color.WHITE);
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ModalUtils.applyProperties(backButton, ModalUtils.normalFont, Color.WHITE, Color.BLACK, ModalUtils.buttonSize);
+        ModalUtils.addEnterKeySupport(backButton);
+
         backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 layoutManager.show(parent, "main");
@@ -349,9 +343,10 @@ class CalculatorModal {
                         || currencyDropdown.getSelectedItem().equals("---")) {
                     resultLabel.setText("Please fill in all values!");
                 } else {
-                    System.out.println("Getting the tariff on a " + ModalUtils.cleanPriceString(priceInput.getText()) + " "
-                            + currencyDropdown.getSelectedItem() + " item from "
-                            + countryDropdown.getSelectedItem().toString().substring(0, 2));
+                    System.out.println(
+                            "Getting the tariff on a " + ModalUtils.cleanPriceString(priceInput.getText()) + " "
+                                    + currencyDropdown.getSelectedItem() + " item from "
+                                    + countryDropdown.getSelectedItem().toString().substring(0, 2));
                     double price;
                     try {
                         price = Double.parseDouble(ModalUtils.cleanPriceString(priceInput.getText()));
@@ -379,11 +374,8 @@ class CalculatorModal {
 
         calculatorModal.add(title);
         calculatorModal.add(countryDropdown);
-        // calculatorModal.add(priceInput);
-        // calculatorModal.add(currencyDropdown);
         calculatorModal.add(priceInputGroup);
         calculatorModal.add(submitButton);
-        // calculatorModal.add(resultLabel);
         calculatorModal.add(resultGroup);
         calculatorModal.add(backButton);
 
@@ -403,27 +395,22 @@ class CurrencyModal {
 
         // Title text
         JLabel title = new JLabel("Currency Exchange");
-        title.setFont(new Font("Nunito Regular", Font.PLAIN, 50));
+        ModalUtils.applyProperties(title, ModalUtils.titleFont, Color.WHITE, null, null);
         title.setBorder(new EmptyBorder(50, 50, 50, 50));
-        title.setForeground(Color.WHITE);
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Top text
         JLabel topText = new JLabel("Convert");
-        topText.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
+        ModalUtils.applyProperties(topText, ModalUtils.normalFont, Color.WHITE, null, null);
         topText.setBorder(new EmptyBorder(10, 10, 10, 10));
-        topText.setForeground(Color.WHITE);
-        topText.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Item price input
-        JTextField priceInput = new JTextField("[Enter Amount]");
-        priceInput.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        priceInput.setForeground(Color.GRAY);
-        priceInput.setMaximumSize(new Dimension(300, 100));
+        JTextField priceInput = new JTextField("[Amount]");
+        ModalUtils.applyProperties(priceInput, ModalUtils.monoFont, Color.GRAY, Color.WHITE, new Dimension(300, 100));
         priceInput.setHorizontalAlignment(SwingConstants.CENTER);
+
         priceInput.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
-                if (priceInput.getText().equals("[Enter Amount]")) {
+                if (priceInput.getText().equals("[Amount]")) {
                     priceInput.setText("");
                     priceInput.setForeground(Color.BLACK);
                 }
@@ -432,15 +419,16 @@ class CurrencyModal {
             public void focusLost(FocusEvent e) {
                 if (priceInput.getText().isEmpty()) {
                     priceInput.setForeground(Color.GRAY);
-                    priceInput.setText("[Enter Amount]");
+                    priceInput.setText("[Amount]");
                 }
             }
         });
 
         // Currency selection dropdown
         JComboBox<String> currencyDropdown = new JComboBox<>();
-        currencyDropdown.setMaximumSize(new Dimension(100, 100));
-        currencyDropdown.setFont(new Font("Monospaced", Font.PLAIN, 25));
+        ModalUtils.applyProperties(currencyDropdown, ModalUtils.monoFont, Color.BLACK, Color.WHITE,
+                new Dimension(100, 100));
+
         currencyDropdown.addItem("USD");
         currencyDropdown.addItem("EUR");
         currencyDropdown.addItem("GBP");
@@ -461,15 +449,14 @@ class CurrencyModal {
 
         // Divider text
         JLabel dividerText = new JLabel("to");
-        dividerText.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
+        ModalUtils.applyProperties(dividerText, ModalUtils.normalFont, Color.BLACK, null, null);
         dividerText.setBorder(new EmptyBorder(10, 10, 10, 10));
-        dividerText.setForeground(Color.BLACK);
-        dividerText.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Currency selection dropdown 2
         JComboBox<String> currencyDropdown2 = new JComboBox<>();
-        currencyDropdown2.setMaximumSize(new Dimension(100, 100));
-        currencyDropdown2.setFont(new Font("Monospaced", Font.PLAIN, 25));
+        ModalUtils.applyProperties(currencyDropdown2, ModalUtils.monoFont, Color.BLACK, Color.WHITE,
+                new Dimension(100, 100));
+
         currencyDropdown2.addItem("USD");
         currencyDropdown2.addItem("EUR");
         currencyDropdown2.addItem("GBP");
@@ -490,7 +477,7 @@ class CurrencyModal {
 
         // Price input group
         JPanel priceInputGroup = new JPanel();
-        priceInputGroup.setMaximumSize(new Dimension(500, 100));
+        priceInputGroup.setMaximumSize(new Dimension(400, 100));
         priceInputGroup.setLayout(new BoxLayout(priceInputGroup, BoxLayout.X_AXIS));
         priceInputGroup.add(priceInput);
         priceInputGroup.add(currencyDropdown);
@@ -499,20 +486,15 @@ class CurrencyModal {
 
         // Submit button
         JButton submitButton = new JButton("Submit");
-        submitButton.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        submitButton.setMaximumSize(new Dimension(400, 100));
-        submitButton.setBackground(new Color(19, 102, 11));
-        submitButton.setForeground(Color.WHITE);
-        submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ModalUtils.applyProperties(submitButton, ModalUtils.normalFont, Color.WHITE, new Color(19, 102, 11),
+                ModalUtils.buttonSize);
+        ModalUtils.addEnterKeySupport(submitButton);
 
         // Result display
         JLabel resultLabel = new JLabel("Waiting...");
+        ModalUtils.applyProperties(resultLabel, ModalUtils.normalFont, Color.BLACK, Color.WHITE, ModalUtils.buttonSize);
         resultLabel.setBorder(new EmptyBorder(50, 50, 50, 50));
-        resultLabel.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        resultLabel.setMaximumSize(new Dimension(400, 100));
         resultLabel.setOpaque(true);
-        resultLabel.setBackground(Color.WHITE);
-        resultLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         resultLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         submitButton.addActionListener(new ActionListener() {
@@ -545,11 +527,9 @@ class CurrencyModal {
 
         // Back button
         JButton backButton = new JButton("Main Menu");
-        backButton.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        backButton.setMaximumSize(new Dimension(400, 100));
-        backButton.setBackground(Color.BLACK);
-        backButton.setForeground(Color.WHITE);
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ModalUtils.applyProperties(backButton, ModalUtils.normalFont, Color.WHITE, Color.BLACK, ModalUtils.buttonSize);
+        ModalUtils.addEnterKeySupport(backButton);
+
         backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 layoutManager.show(parent, "main");
@@ -579,17 +559,8 @@ class RankingsModal {
 
         // Title text
         JLabel title = new JLabel("Tariff List");
-        title.setFont(new Font("Nunito Regular", Font.PLAIN, 50));
+        ModalUtils.applyProperties(title, ModalUtils.titleFont, Color.WHITE, null, null);
         title.setBorder(new EmptyBorder(50, 50, 10, 50));
-        title.setForeground(Color.WHITE);
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Explanation text
-        JLabel text = new JLabel("Ranked from low to high.");
-        text.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        text.setBorder(new EmptyBorder(10, 10, 10, 10));
-        text.setForeground(Color.WHITE);
-        text.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Tariff list
         JPanel rankingList = new JPanel();
@@ -601,8 +572,9 @@ class RankingsModal {
 
         String[][] sortedData = Arrays.copyOf(TariffData.getFullData(), TariffData.getFullData().length);
 
-        Arrays.sort(sortedData,
-                Comparator.comparingDouble(row -> Double.valueOf((TariffOperations.USE_IEEPA ? row[3] : row[2]))));
+        // Uncomment to sort tariffs by percentage
+        // Arrays.sort(sortedData, Comparator.comparingDouble(row ->
+        // Double.valueOf((TariffOperations.USE_IEEPA ? row[3] : row[2]))));
 
         for (String[] info : sortedData) {
             if (info[2].equals(".00")) {
@@ -624,11 +596,8 @@ class RankingsModal {
 
         // Back button
         JButton backButton = new JButton("Main Menu");
-        backButton.setFont(new Font("Nunito Regular", Font.PLAIN, 25));
-        backButton.setMaximumSize(new Dimension(400, 100));
-        backButton.setBackground(Color.BLACK);
-        backButton.setForeground(Color.WHITE);
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ModalUtils.applyProperties(backButton, ModalUtils.normalFont, Color.WHITE, Color.BLACK, ModalUtils.buttonSize);
+
         backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 layoutManager.show(parent, "main");
@@ -636,7 +605,6 @@ class RankingsModal {
         });
 
         rankingsPanel.add(title);
-        rankingsPanel.add(text);
         rankingsPanel.add(viewport);
         rankingsPanel.add(backButton);
 

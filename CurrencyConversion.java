@@ -175,17 +175,4 @@ public class CurrencyConversion {
     public static String[][] getFullData() {
         return rates;
     }
-
-    /**
-     * This main method is for testing only and should be removed in production.
-     */
-    public static void main(String[] args) {
-        updateData(CURRENCY_FILE);
-        loadData();
-        TariffData.loadData();
-        System.out.println("$" + convert(10230, "JPY"));
-        System.out.println("$" + TariffOperations.getTariff(convert(10230, "JPY"), "JP", false));
-        System.out.println(
-                "[CurrencyConversion.main] Note: This main method is for testing only and should be removed in production.");
-    }
 }

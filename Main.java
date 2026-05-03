@@ -6,8 +6,9 @@ public class Main {
 
         Scanner sc = new Scanner(System.in);
         System.out.println("Update datasets? (Y/N)");
-        boolean input = false; // sc.nextLine().toLowerCase().equals("y");
+        boolean input = false;
         System.out.println("N");
+        // boolean input = sc.nextLine().toLowerCase().equals("y");
 
         double time = System.nanoTime();
         if (input) {

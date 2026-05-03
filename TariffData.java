@@ -109,20 +109,6 @@ public class TariffData {
      }
 
      /**
-      * This main method is for testing only and should be removed in production.
-      */
-     public static void main(String[] args) {
-
-          // updateData(TARIFF_FILE, "https://api.com");
-          loadData(TARIFF_FILE);
-          String[] japanTariffData = getData("JP");
-          System.out.println(japanTariffData[2]);
-
-          System.out.println(
-                    "[TariffData.main] Note: This main method is for testing only and should be removed in production.");
-     }
-
-     /**
       * Utility method to print a 2D array.
       * 
       * @param array The 2D array to be printed.
