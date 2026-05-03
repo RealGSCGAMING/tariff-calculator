@@ -1,7 +1,7 @@
 public class TariffOperations {
 
     // Enable for demo
-    private static final boolean USE_IEEPA = true;
+    public static final boolean USE_IEEPA = true;
 
     /**
      * Retrieve the tariff rate on a country.

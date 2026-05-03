@@ -125,6 +125,32 @@ public class CurrencyConversion {
     }
 
     /**
+     * Converts USD to local currencies based on a set rate.
+     * 
+     * @param price The price of an item in USD.
+     * @param rate  The conversion rate of the local currency.
+     * 
+     * @return The price of the item in the local currency.
+     */
+    public static double reverseConvert(double price, double rate) {
+
+        // Round to prevent extra decimals at end
+        return Math.round((price * rate) * 100.0) / 100.0;
+    }
+
+    /**
+     * Converts USD to local currencies.
+     * 
+     * @param price       The price of an item in USD.
+     * @param countryCode The ISO code of the country.
+     * 
+     * @return The price of the item in the local currency.
+     */
+    public static double reverseConvert(double price, String currencyCode) {
+        return reverseConvert(price, getRate(currencyCode));
+    }
+
+    /**
      * Retrieves the conversion rate of a country's local currency.
      * 
      * @param countryCode The country to retrieve the rate of.

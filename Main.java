@@ -6,9 +6,8 @@ public class Main {
 
         Scanner sc = new Scanner(System.in);
         System.out.println("Update datasets? (Y/N)");
-        boolean input = false; //sc.nextLine().toLowerCase().equals("y");
+        boolean input = false; // sc.nextLine().toLowerCase().equals("y");
         System.out.println("N");
-        
 
         double time = System.nanoTime();
         if (input) {
@@ -21,16 +20,24 @@ public class Main {
         System.out.println("Opening GUI...");
         new GUI();
 
-        System.out.println("Done in " + ((System.nanoTime() - time) / 1e9) + " secs");
-        
+        System.out.println("Loaded in " + ((System.nanoTime() - time) / 1e9) + " secs");
+
         sc.close();
     }
 
+    /**
+     * Loads data files into data classes.
+     */
     public static void setup() {
         TariffData.loadData();
         CurrencyConversion.loadData();
     }
 
+    /**
+     * Loads data files into data classes.
+     * 
+     * @param update Whether to update the data files over the internet.
+     */
     public static void setup(boolean update) {
         if (update) {
             // TariffData.updateData();
